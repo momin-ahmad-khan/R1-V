@@ -29,3 +29,38 @@ torchrun --nproc_per_node=4     --nnodes=1     --node_rank=0     --master_addr=1
    in transformers/models/qwen2_5_vl/modeling_qwen2_5_vl.py
 
    You will have to check where your library is installed. usually it is something like python3.x/site-packages/..../.../../transformers. The error will give you the exact path.
+
+9. To run with peft:
+    torchrun --nproc_per_node=4 \
+    --nnodes=1 \
+    --node_rank=0 \
+    --master_addr=127.0.0.1 \
+    --master_port=12345 \
+    src/open_r1/coco_grpo.py \
+    --output_dir outputs/qwen2.5vl-3b-coco-grpo-3obj \
+    --model_name_or_path Qwen/Qwen2.5-VL-3B-Instruct \
+    --dataset_name leonardPKU/clevr_cogen_a_train \
+    --deepspeed local_scripts/zero3.json \
+    --max_prompt_length 512 \
+    --max_completion_length 256 \
+    --per_device_train_batch_size 1 \
+    --gradient_accumulation_steps 2 \
+    --logging_steps 1 \
+    --bf16 \
+    --bf16_full_eval \
+    --torch_dtype bfloat16 \
+    --report_to wandb \
+    --gradient_checkpointing false \
+    --attn_implementation flash_attention_2 \
+    --max_pixels 401408 \
+    --num_train_epochs 1 \
+    --run_name Qwen2-VL-3B-GRPO-CLEVR \
+    --save_steps 50 \
+    --save_only_model true \
+    --num_generations 2 \
+    --reward_funcs iou \
+    --use_peft \
+    --lora_r 32 \
+    --lora_alpha 16 \
+    --lora_target_modules q_proj v_proj k_proj o_proj
+
